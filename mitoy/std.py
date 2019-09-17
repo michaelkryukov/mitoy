@@ -30,6 +30,11 @@ def get_builtins():
 # ----------------------------------------------------------------------------
 
 
+def write_to_file(filename, content):
+    with open(filename, 'w') as fh:
+        fh.write(content)
+
+
 def throw(reason):
     raise Exception(reason)
 
@@ -67,9 +72,15 @@ def make_array_object(source_array=()):
 add_function('MakeList', [], make_array_object)
 add_function('Throw', ['reason'], throw)
 
-add_function('S', ['val'], str)
-add_function('I', ['val'], int)
-add_function('F', ['val'], float)
+add_function('Str', ['val'], str)
+add_function('Int', ['val'], int)
+add_function('Float', ['val'], float)
 
-add_function('Trace', ['val'], print)
-add_function('Write', ['val'], lambda val: print(val, end=""))
+add_function('StrSlice', ['val', 's', 'e'], lambda val, s, e: val[s: e])
+add_function('StrLen', ['val'], lambda val: len(val))
+
+add_function('Input', [], lambda: input())
+add_function('WriteToFile', ['filename', 'content'], write_to_file)
+
+add_function('TraceNl', ['val'], print)
+add_function('Trace', ['val'], lambda val: print(val, end=""))

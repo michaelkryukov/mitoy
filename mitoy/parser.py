@@ -35,7 +35,7 @@ class Parser():
         def _(p):
             return asts.Module(p[0])
 
-        @self.pg.production("topdefs : ")
+        @self.pg.production("topdefs :")
         @self.pg.production("topdefs : import topdefs")
         @self.pg.production("topdefs : function topdefs")
         def _(p):
@@ -56,7 +56,7 @@ class Parser():
         def _(p):
             return asts.Function('_', p[2], p[5])
 
-        @self.pg.production("arguments : ")
+        @self.pg.production("arguments :")
         @self.pg.production("arguments : IDENT")
         @self.pg.production("arguments : IDENT ',' arguments")
         def _(p):
@@ -85,7 +85,7 @@ class Parser():
         def _(p):
             return asts.Field(p[0], p[2].value)
 
-        @self.pg.production("call_arguments : ")
+        @self.pg.production("call_arguments :")
         @self.pg.production("call_arguments : expression")
         @self.pg.production("call_arguments : expression ',' call_arguments")
         def _(p):
@@ -96,9 +96,16 @@ class Parser():
             elif len(p) == 3:
                 return [p[0], *p[2]]
 
-        @self.pg.production("for_loop : 'for' expression ';' expression ';' expression '{' expressions '}'")
+        @self.pg.production("for_loop : 'for' optional_expression ';' optional_expression ';' optional_expression '{' expressions '}'")
         def _(p):
-             return asts.ForLoop(p[1], p[3], p[5], p[7])
+            return asts.ForLoop(p[1], p[3], p[5], p[7])
+
+        @self.pg.production("optional_expression :")
+        @self.pg.production("optional_expression : expression")
+        def _(p):
+            if len(p) == 0:
+                return asts.Nothing()
+            return p[0]
 
         @self.pg.production("if_stmt : 'if' expression '{' expressions '}'")
         @self.pg.production("if_stmt : 'if' expression '{' expressions '}' 'else' '{' expressions '}'")
@@ -106,12 +113,12 @@ class Parser():
         def _(p):
             if len(p) == 5:
                 return asts.IfStatement(p[1], p[3], [])
-            elif len(p) == 7:
+            elif len(p) == 9:
                 return asts.IfStatement(p[1], p[3], p[7])
             else:
-                return asts.IfStatement(p[1], p[3], p[6])
+                return asts.IfStatement(p[1], p[3], [p[6]])
 
-        @self.pg.production("expressions : ")
+        @self.pg.production("expressions :")
         @self.pg.production("expressions : expression")
         @self.pg.production("expressions : expression ';' expressions")
         def _(p):
@@ -122,15 +129,103 @@ class Parser():
             else:
                 return [p[0], *p[2]]
 
-        @self.pg.production("expression : '(' expression ')'")
+        @self.pg.production("primary_expression : '(' expression ')'")
         def _(p):
             return p[1]
 
+        @self.pg.production("primary_expression : STRING")
+        def _(p):
+            return asts.ValueString(p[0].value)
+
+        @self.pg.production("primary_expression : FLOAT")
+        def _(p):
+            return asts.ValueFloat(p[0].value)
+
+        @self.pg.production("primary_expression : INT")
+        def _(p):
+            return asts.ValueInt(p[0].value)
+
+        @self.pg.production("primary_expression : IDENT")
+        def _(p):
+            return asts.Memory(p[0].value)
+
+        @self.pg.production("postfix_expression : primary_expression")
+        @self.pg.production("postfix_expression : function_call")
+        def _(p):
+            return p[0]
+
+        @self.pg.production("unary_expression : postfix_expression")
+        @self.pg.production("unary_expression : '!' unary_expression")
+        @self.pg.production("unary_expression : '-' unary_expression")
+        def _(p):
+            if len(p) == 1: return p[0]
+            return asts.UnaryOp(p[1], p[0].gettokentype())
+
+        @self.pg.production("multiplicative_expression : unary_expression")
+        @self.pg.production("multiplicative_expression : multiplicative_expression '/' unary_expression")
+        @self.pg.production("multiplicative_expression : multiplicative_expression '//' unary_expression")
+        @self.pg.production("multiplicative_expression : multiplicative_expression '*' unary_expression")
+        @self.pg.production("multiplicative_expression : multiplicative_expression '%' unary_expression")
+
+        @self.pg.production("additive_expression : multiplicative_expression")
+        @self.pg.production("additive_expression : additive_expression '+' multiplicative_expression")
+        @self.pg.production("additive_expression : additive_expression '-' multiplicative_expression")
+
+        @self.pg.production("shift_expression : additive_expression")
+        @self.pg.production("shift_expression : shift_expression '<<' additive_expression")
+        @self.pg.production("shift_expression : shift_expression '>>' additive_expression")
+
+        @self.pg.production("relational_expression : shift_expression")
+        @self.pg.production("relational_expression : relational_expression '<' shift_expression")
+        @self.pg.production("relational_expression : relational_expression '>' shift_expression")
+        @self.pg.production("relational_expression : relational_expression '<=' shift_expression")
+        @self.pg.production("relational_expression : relational_expression '>=' shift_expression")
+
+        @self.pg.production("equality_expression : relational_expression")
+        @self.pg.production("equality_expression : equality_expression '==' relational_expression")
+        @self.pg.production("equality_expression : equality_expression '!=' relational_expression")
+
+        @self.pg.production("and_expression : equality_expression")
+        @self.pg.production("and_expression : and_expression '&' equality_expression")
+
+        @self.pg.production("exclusive_or_expression : and_expression")
+        @self.pg.production("exclusive_or_expression : exclusive_or_expression '^' and_expression")
+
+        @self.pg.production("inclusive_or_expression : exclusive_or_expression")
+        @self.pg.production("inclusive_or_expression : inclusive_or_expression '|' exclusive_or_expression")
+
+        @self.pg.production("logical_and_expression : inclusive_or_expression")
+        @self.pg.production("logical_and_expression : logical_and_expression '&&' inclusive_or_expression")
+
+        @self.pg.production("logical_or_expression : logical_and_expression")
+        @self.pg.production("logical_or_expression : logical_or_expression '||' logical_and_expression")
+        def _(p):
+            if len(p) == 1:
+                return p[0]
+
+            return asts.BinaryOp(p[0], p[2], p[1].gettokentype())
+
+        @self.pg.production("assignment_expression : logical_or_expression")
+        def _(p):
+            return p[0]
+
+        @self.pg.production("assignment_expression : IDENT '=' logical_or_expression")
+        def _(p):
+            return asts.Assign(p[0].value, p[2])
+
+        @self.pg.production("assignment_expression : IDENT '.=' logical_or_expression")
+        def _(p):
+            return asts.Assign(p[0].value, p[2], overwrite=True)
+
+        @self.pg.production("assignment_expression : field '=' logical_or_expression")
+        def _(p):
+            return asts.Assign(p[0], p[2])
+
+        @self.pg.production("expression : assignment_expression")
         @self.pg.production("expression : field")
         @self.pg.production("expression : if_stmt")
         @self.pg.production("expression : for_loop")
         @self.pg.production("expression : function")
-        @self.pg.production("expression : function_call")
         def _(p):
             return p[0]
 
@@ -142,75 +237,12 @@ class Parser():
         def _(p):
             return asts.Assign('_ret', p[1])
 
-        @self.pg.production("expression : STRING")
-        def _(p):
-            return asts.ValueString(p[0].value)
-
-        @self.pg.production("expression : FLOAT")
-        def _(p):
-            return asts.ValueFloat(p[0].value)
-
-        @self.pg.production("expression : INT")
-        def _(p):
-            return asts.ValueInt(p[0].value)
-
-        @self.pg.production("expression : IDENT")
-        def _(p):
-            return asts.Memory(p[0].value)
-
-        @self.pg.production("expression : IDENT '=' expression")
-        def _(p):
-            return asts.Assign(p[0].value, p[2])
-
-        @self.pg.production("expression : field '=' expression")
-        def _(p):
-            return asts.Assign(p[0], p[2])
-
-        @self.pg.production("expression : IDENT '.=' expression")
-        def _(p):
-            return asts.Assign(p[0].value, p[2], overwrite=True)
-
-        @self.pg.production("expression : expression '+' expression")
-        @self.pg.production("expression : expression '-' expression")
-        @self.pg.production("expression : expression '/' expression")
-        @self.pg.production("expression : expression '//' expression")
-        @self.pg.production("expression : expression '*' expression")
-        @self.pg.production("expression : expression '==' expression")
-        @self.pg.production("expression : expression '!=' expression")
-        @self.pg.production("expression : expression '&&' expression")
-        @self.pg.production("expression : expression '||' expression")
-        @self.pg.production("expression : expression '&' expression")
-        @self.pg.production("expression : expression '|' expression")
-        @self.pg.production("expression : expression '>' expression")
-        @self.pg.production("expression : expression '>=' expression")
-        @self.pg.production("expression : expression '<' expression")
-        @self.pg.production("expression : expression '<=' expression")
-        @self.pg.production("expression : expression '^' expression")
-        @self.pg.production("expression : expression '>>' expression")
-        @self.pg.production("expression : expression '<<' expression")
-        def _(p):
-            return asts.BinaryOp(p[0], p[2], p[1].gettokentype())
-
-        @self.pg.production("expression : '~' expression")
-        @self.pg.production("expression : '!' expression")
-        @self.pg.production("expression : '-' expression", precedence="un'-'")
-        def _(p):
-            return asts.UnaryOp(p[1], p[0].gettokentype())
-
         @self.pg.error
         def _(token):
             raise ValueError(token)
 
     def get_parser(self):
-        # Supress, but remember warning: `ParserGeneratorWarning:`
-
-        logging.captureWarnings(True)
-
-        temp = self.pg.build()
-
-        logging.captureWarnings(False)
-
-        return temp
+        return self.pg.build()
 
 
 def parse(source, source_path=""):

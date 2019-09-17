@@ -104,5 +104,27 @@ fn Test() {
             Test(t2.id).ToBeEqual(3);
             Test(t3.id).ToBeEqual(3);
         });
+
+        Case("Nested access works fine", fn (Test) {
+            fn Obj(n) {
+                if n == 1 {
+                    a = "nice";
+                } else {
+                    a = Obj(n - 1);
+                };
+
+                fn getA() {
+                    ret a;
+                };
+
+                retobj;
+            };
+
+            o = Obj(5);
+
+            Test(o.a.a.a.a.a).ToBeEqual("nice");
+            Test(o.getA().a.getA().a.a).ToBeEqual("nice");
+            Test(o.getA().getA().getA().getA().getA()).ToBeEqual("nice");
+        });
     });
 }

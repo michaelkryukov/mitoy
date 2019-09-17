@@ -25,41 +25,78 @@ if_stmt ::= 'if' expression '{' expressions '}'
 if_stmt ::= 'if' expression '{' expressions '}' 'else' '{' expressions '}'
 if_stmt ::= 'if' expression '{' expressions '}' 'else' if_stmt
 
-for_loop ::= 'for' expression ';' expression ';' expression '{' expressions '}'
+for_loop ::= 'for' optional_expression ';' optional_expression ';' optional_expression '{' expressions '}'
+
+optional_expression ::=
+optional_expression ::= expression
 
 expressions ::=
 expressions ::= expression
 expressions ::= expression ';' expressions
 
-expression ::= '(' expression ')'
+primary_expression ::= '(' expression ')'
+primary_expression ::= string
+primary_expression ::= float
+primary_expression ::= int
+primary_expression ::= name
+
+postfix_expression ::= primary_expression
+postfix_expression ::= function_call
+
+unary_expression ::= postfix_expression
+unary_expression ::= '!' unary_expression
+unary_expression ::= '-' unary_expression
+
+multiplicative_expression ::= unary_expression
+multiplicative_expression ::= multiplicative_expression '/' unary_expression
+multiplicative_expression ::= multiplicative_expression '//' unary_expression
+multiplicative_expression ::= multiplicative_expression '&' unary_expression
+multiplicative_expression ::= multiplicative_expression '%' unary_expression
+
+additive_expression ::= multiplicative_expression
+additive_expression ::= additive_expression '+' multiplicative_expression
+additive_expression ::= additive_expression '-' multiplicative_expression
+
+shift_expression ::= additive_expression
+shift_expression ::= shift_expression '/' additive_expression
+shift_expression ::= shift_expression '//' additive_expression
+
+relational_expression ::= shift_expression
+relational_expression ::= relational_expression '<' shift_expression
+relational_expression ::= relational_expression '>' shift_expression
+relational_expression ::= relational_expression '<=' shift_expression
+relational_expression ::= relational_expression '>=' shift_expression
+
+equality_expression ::= relational_expression
+equality_expression ::= equality_expression '==' relational_expression
+equality_expression ::= equality_expression '!=' relational_expression
+
+and_expression ::= equality_expression
+and_expression ::= and_expression '&' equality_expression
+
+exclusive_or_expression ::= and_expression
+exclusive_or_expression ::= exclusive_or_expression '&' and_expression
+
+inclusive_or_expression ::= exclusive_or_expression
+inclusive_or_expression ::= inclusive_or_expression '|' exclusive_or_expression
+
+logical_and_expression ::= inclusive_or_expression
+logical_and_expression ::= logical_and_expression '&&' inclusive_or_expression
+
+logical_or_expression ::= logical_and_expression
+logical_or_expression ::= logical_or_expression '||' logical_and_expression
+
+assignment_expression ::= logical_or_expression
+assignment_expression ::= name '=' expression
+assignment_expression ::= name '.=' expression
+assignment_expression ::= field '.' name
+
+expression ::= assignment_expression
+expression ::= field
 expression ::= if_statement
+expression ::= for_loop
 expression ::= function
-expression ::= function_call
 expression ::= 'retobj'
 expression ::= 'ret' expression
-expression ::= string
-expression ::= float
-expression ::= int
-expression ::= name
-expression ::= name '=' expression
-expression ::= name '.=' expression
-expression ::= field '.' name
-expression ::= expression '>>' expression
-expression ::= expression '<<' expression
-expression ::= expression '+' expression
-expression ::= expression '-' expression
-expression ::= expression '/' expression
-expression ::= expression '//' expression
-expression ::= expression '*' expression
-expression ::= expression '>' expression
-expression ::= expression '<' expression
-expression ::= expression '==' expression
-expression ::= expression '!=' expression
-expression ::= expression '&&' expression
-expression ::= expression '||' expression
-expression ::= expression '&' expression
-expression ::= expression '|' expression
-expression ::= expression '^' expression
-expression ::= '~' expression
-expression ::= '!' expression
-expression ::= '-' expression
+
+expression ::= '(' expression ')'

@@ -1,0 +1,40 @@
+import t "testing"
+
+fn Test() {
+    t.Describe("Math operations", fn (Case) {
+        Case("All operators do work", fn (Test) {
+            Test(1 + 1).ToBeEqual(2);
+            Test(1 - 1).ToBeEqual(0);
+            Test(1 * 1).ToBeEqual(1);
+            Test(2 / 4).ToBeEqual(0.5);
+            Test(2 // 4).ToBeEqual(0);
+            Test(4 % 2).ToBeEqual(0);
+            Test(3 % 2).ToBeEqual(1);
+            Test(1 | 2).ToBeEqual(3);
+            Test(7 & 2).ToBeEqual(2);
+            Test(1 && 1).ToBeEqual(1);
+            Test(1 && 0).ToBeEqual(0);
+            Test(1 || 0).ToBeEqual(1);
+            Test(0 || 0).ToBeEqual(0);
+            Test(2 < 4).ToBeEqual(1);
+            Test(2 > 4).ToBeEqual(0);
+            Test(3 >= 3).ToBeEqual(1);
+            Test(4 <= 4).ToBeEqual(1);
+            Test(4 == 4).ToBeEqual(1);
+            Test(4 != 4).ToBeEqual(0);
+
+            Test(-4).ToBeEqual(-4);
+            Test(- 4 + 8).ToBeEqual(4);
+
+            Test(!0).ToBeEqual(1);
+            Test(!!!1).ToBeEqual(0);
+        });
+
+        Case("Parentheses do work", fn (Test) {
+            Test((2 + 2) * 2).ToBeEqual(8);
+            Test((2 + 2) / 2 * 2).ToBeEqual(4);
+            Test((2 + 2) / (2 * 2)).ToBeEqual(1);
+            Test(13 + (2 - (2 * 2) - (-2))).ToBeEqual(13);
+        });
+    });
+}

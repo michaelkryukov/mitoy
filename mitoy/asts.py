@@ -3,6 +3,23 @@ import os
 from utils import pull_from_context
 
 
+
+def eval_expressions_block(expressions, context):
+    for expr in expressions:
+        expr.eval(context)
+
+        if context.get('_ret') is not None:
+            return context['_ret']
+
+        if context.get('_obj') is not None:
+            return Object(context)
+
+
+class Nothing:
+    def eval(self, context):
+        return self
+
+
 class Import:
     def __init__(self, name, path):
         self.name = name
@@ -61,7 +78,7 @@ class Module:
 
 
 class Object:
-    def __init__(self, content, name=""):
+    def __init__(self, content, name="<obj>"):
         self.name = name
         self.content = content
 
@@ -197,14 +214,7 @@ class FunctionCall:
         if callable(function.body):
             return function.body(context)
 
-        for expr in function.body:
-            expr.eval(context)
-
-            if context.get('_ret') is not None:
-                return context['_ret']
-
-            if context.get('_obj') is not None:
-                return Object(context, function.name)
+        return eval_expressions_block(function.body, context)
 
 
 class IfStatement:
@@ -217,11 +227,9 @@ class IfStatement:
         val = None
 
         if self.cond.eval(context):
-            for expr in self.true or []:
-                val = expr.eval(context)
+            val = eval_expressions_block(self.true or [], context)
         else:
-            for expr in self.false or []:
-                val = expr.eval(context)
+            val = eval_expressions_block(self.false or [], context)
 
         return val
 
@@ -237,8 +245,13 @@ class ForLoop:
         self.init.eval(context)
 
         while self.cond.eval(context):
-            for expr in self.body:
-                expr.eval(context)
+            eval_expressions_block(self.body, context)
+
+            if context.get('_ret') is not None:
+                return context['_ret']
+
+            if context.get('_obj') is not None:
+                return Object(context)
 
             self.tick.eval(context)
 
@@ -283,6 +296,8 @@ class BinaryOp:
             return l // r
         if op == "'*'":
             return l * r
+        if op == "'%'":
+            return l % r
         if op == "'>'":
             return l > r
         if op == "'>='":

@@ -1,0 +1,20 @@
+fn Main() {
+    TraceNl("Enter your message (enter empty line to stop)");
+
+    message = "";
+
+    for;;{
+        line = Input();
+
+        if StrLen(line) == 0 {
+            WriteToFile("output.txt", message);
+            ret 0;
+        };
+
+        if StrLen(message) == 0 {
+            message = line;
+        } else if StrLen(message) > 0 {
+            message = message + "\n" + line;
+        };
+    };
+}

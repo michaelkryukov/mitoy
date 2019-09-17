@@ -1,5 +1,5 @@
 fn Assert(v, msg) {
-    if (!v) { Throw(msg) };
+    if !v { Throw(msg) };
 }
 
 fn Describe(description, testFunc) {
@@ -8,30 +8,30 @@ fn Describe(description, testFunc) {
             fn ToBeEqual(v2) {
                 Assert(
                     v1 == v2,
-                    "[ " + description + " ] Expected '" + S(v2)
-                    + "'" + ", got '" + S(v1) + "'"
+                    "[ " + description + " ] Expected '" + Str(v2)
+                    + "'" + ", got '" + Str(v1) + "'"
                 );
             };
 
             fn NotToBeEqual(v2) {
                 Assert(
                     v1 != v2,
-                    "[ " + description + " ] Expected not '" + S(v2)
-                    + "'" + ", but got '" + S(v1) + "'"
+                    "[ " + description + " ] Expected not '" + Str(v2)
+                    + "'" + ", but got '" + Str(v1) + "'"
                 );
             };
 
             retobj;
         };
 
-        Trace("    - " + caseDescription);
+        TraceNl("    - " + caseDescription);
 
         caseTestFunc(Test);
     };
 
-    Trace(description + ":");
+    TraceNl(description + ":");
 
     testFunc(Case);
 
-    Trace("");
+    TraceNl("");
 }

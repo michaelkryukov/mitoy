@@ -36,8 +36,8 @@ fn Test() {
 
 # Function will be called when calling file directly
 fn Main() {
-    Trace(Fact(4));  # Outputs 24
-    Trace(Fact(5));  # Outputs 120
+    TraceNl(Fact(4));  # Outputs 24
+    TraceNl(Fact(5));  # Outputs 120
 }
 ```
 
@@ -52,5 +52,4 @@ python3 mitoy --test 'path/to/folder' # run tests for every file in folder
 
 ## Notes
 
-- `ParserGeneratorWarning: 18 shift/reduce conflicts` :/
 - This project probably won't be developed further

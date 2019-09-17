@@ -19,6 +19,6 @@ fn Test() {
 }
 
 fn Main() {
-    Trace(Fact(4));  # Outputs 24
-    Trace(Fact(5));  # Outputs 120
+    TraceNl(Fact(4));  # Outputs 24
+    TraceNl(Fact(5));  # Outputs 120
 }
