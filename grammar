@@ -1,0 +1,65 @@
+module ::= functions
+
+functions ::=
+functions ::= function functions
+
+function  ::= 'fn' name '(' arguments ')' '{' expressions '}'
+
+arguments ::=
+arguments ::= name
+arguments ::= name ',' arguments
+
+function_call ::= function_call '(' call_arguments ')'
+function_call ::= field '(' call_arguments ')'
+function_call ::= name '(' call_arguments ')'
+
+call_arguments ::=
+call_arguments ::= expression
+call_arguments ::= expression ',' call_arguments
+
+field ::= function_call '.' name
+field ::= field '.' name
+field ::= name '.' name
+
+if_stmt ::= 'if' expression '{' expressions '}'
+if_stmt ::= 'if' expression '{' expressions '}' 'else' '{' expressions '}'
+if_stmt ::= 'if' expression '{' expressions '}' 'else' if_stmt
+
+for_loop ::= 'for' expression ';' expression ';' expression '{' expressions '}'
+
+expressions ::=
+expressions ::= expression
+expressions ::= expression ';' expressions
+
+expression ::= '(' expression ')'
+expression ::= if_statement
+expression ::= function
+expression ::= function_call
+expression ::= 'retobj'
+expression ::= 'ret' expression
+expression ::= string
+expression ::= float
+expression ::= int
+expression ::= name
+expression ::= name '=' expression
+expression ::= name '.=' expression
+expression ::= field '.' name
+expression ::= expression '>>' expression
+expression ::= expression '<<' expression
+expression ::= expression '+' expression
+expression ::= expression '-' expression
+expression ::= expression '/' expression
+expression ::= expression '//' expression
+expression ::= expression '*' expression
+expression ::= expression '>' expression
+expression ::= expression '<' expression
+expression ::= expression '==' expression
+expression ::= expression '!=' expression
+expression ::= expression '&&' expression
+expression ::= expression '||' expression
+expression ::= expression '&' expression
+expression ::= expression '|' expression
+expression ::= expression '^' expression
+expression ::= '~' expression
+expression ::= '!' expression
+expression ::= '-' expression

@@ -1,0 +1,24 @@
+import t "testing"
+
+fn Fact(n) {
+    if n < 1 { ret 1 };
+    ret n * Fact(n - 1);
+}
+
+fn Test() {
+    t.Describe("Factorial function", fn (Case) {
+        Case("Fact(0) returns  1", fn (Test) {
+            Test(Fact(0)).ToBeEqual(1);
+        });
+
+        Case("Fact returns correct values", fn (Test) {
+            Test(Fact(4)).ToBeEqual(24);
+            Test(Fact(5)).ToBeEqual(120);
+        });
+    });
+}
+
+fn Main() {
+    Trace(Fact(4));  # Outputs 24
+    Trace(Fact(5));  # Outputs 120
+}

@@ -1,0 +1,14 @@
+import fact "fact"
+import func "func"
+
+fn Main() {
+    list = MakeList();
+    list.add(1);
+    list.add(2);
+    list.add(3);
+    list.add(4);
+
+    list = func.Map(list, fn (v) { ret fact.Fact(v) });
+
+    func.Each(list, Trace);
+}

@@ -1,0 +1,63 @@
+import t "testing"
+
+fn Each(arr, func) {
+    for i = 0; i < arr.len(); i = i + 1 {
+        func(arr.get(i));
+    };
+}
+
+fn Map(arr, func) {
+    newList = MakeList();
+
+    for i = 0; i < arr.len(); i = i + 1 {
+        newList.add(func(arr.get(i)));
+    };
+
+    ret newList;
+}
+
+fn Test() {
+    fn createTestList() {
+        list = MakeList();
+        list.add(1);
+        list.add(2);
+        list.add(3);
+        ret list;
+    };
+
+    t.Describe("Functional 'Each'", fn (Case) {
+        Case("'Each' iterates over array", fn (Test) {
+            list = createTestList();
+
+            sum = 0;
+
+            Each(list, fn (v) {
+                sum .= sum + v;
+            });
+
+            Test(sum).ToBeEqual(6);
+        });
+    });
+
+    t.Describe("Functional 'Map'", fn (Case) {
+        Case("'Map' don't change original list", fn (Test) {
+            list = createTestList();
+
+            newList = Map(list, fn (v) { ret v * v; });
+
+            Test(list.get(0)).ToBeEqual(1);
+            Test(list.get(1)).ToBeEqual(2);
+            Test(list.get(2)).ToBeEqual(3);
+        });
+
+        Case("'Map' creates new list with correct values", fn (Test) {
+            list = createTestList();
+
+            newList = Map(list, fn (v) { ret v * v; });
+
+            Test(newList.get(0)).ToBeEqual(1);
+            Test(newList.get(1)).ToBeEqual(4);
+            Test(newList.get(2)).ToBeEqual(9);
+        });
+    });
+}

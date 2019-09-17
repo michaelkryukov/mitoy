@@ -1,0 +1,37 @@
+fn Assert(v, msg) {
+    if (!v) { Throw(msg) };
+}
+
+fn Describe(description, testFunc) {
+    fn Case(caseDescription, caseTestFunc) {
+        fn Test(v1) {
+            fn ToBeEqual(v2) {
+                Assert(
+                    v1 == v2,
+                    "[ " + description + " ] Expected '" + S(v2)
+                    + "'" + ", got '" + S(v1) + "'"
+                );
+            };
+
+            fn NotToBeEqual(v2) {
+                Assert(
+                    v1 != v2,
+                    "[ " + description + " ] Expected not '" + S(v2)
+                    + "'" + ", but got '" + S(v1) + "'"
+                );
+            };
+
+            retobj;
+        };
+
+        Trace("    - " + caseDescription);
+
+        caseTestFunc(Test);
+    };
+
+    Trace(description + ":");
+
+    testFunc(Case);
+
+    Trace("");
+}

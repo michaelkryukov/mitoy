@@ -1,0 +1,108 @@
+import t "testing"
+
+fn makeCounter() {
+    value = 0;
+
+    fn CountUp() {
+        value .= value + 1;
+        ret value;
+    };
+
+    fn CountDown() {
+        value .= value - 1;
+        ret value;
+    };
+
+    fn GetValue() {
+        ret value;
+    };
+
+    retobj;
+}
+
+fn Test() {
+    t.Describe("Objects", fn (Case) {
+        Case("Object gets created", fn (Test) {
+            counter = makeCounter();
+
+            Test(counter.GetValue()).ToBeEqual(0);
+            Test(counter.CountUp()).ToBeEqual(1);
+            Test(counter.GetValue()).ToBeEqual(1);
+        });
+
+        Case("Multiple object dont' share context", fn (Test) {
+            counter1 = makeCounter();
+            counter2 = makeCounter();
+
+            counter1.CountUp();
+            counter1.CountUp();
+
+            counter2.CountDown();
+
+            Test(counter1.value).NotToBeEqual(counter2.value);
+            Test(counter1.GetValue()).NotToBeEqual(counter2.GetValue());
+            Test(counter1.GetValue()).ToBeEqual(2);
+            Test(counter2.GetValue()).ToBeEqual(-1);
+        });
+
+        Case("Multiple object dont' share context in list", fn (Test) {
+            list = MakeList();
+
+            for i = 0; i < 10; i = i + 1 {
+                list.add(makeCounter());
+            };
+
+            list.get(0).CountUp();
+            list.get(1).CountDown();
+            list.get(2).CountUp();
+            list.get(3).CountDown();
+
+            Test(list.get(0).GetValue()).ToBeEqual(1);
+            Test(list.get(1).GetValue()).ToBeEqual(-1);
+            Test(list.get(2).GetValue()).ToBeEqual(1);
+            Test(list.get(3).GetValue()).ToBeEqual(-1);
+
+            for i = 4; i < 10; i = i + 1 {
+                Test(list.get(i).GetValue()).ToBeEqual(0);
+            };
+        });
+
+        Case("Objects don't brake on assignments", fn (Test) {
+            fn Obj(id) {
+                fn c() {
+                    ret id;
+                };
+
+                fn d() {
+                    id .= id + 1;
+                };
+
+                retobj;
+            };
+
+            o1 = Obj(1);
+            o2 = Obj(2);
+            o3 = Obj(3);
+
+            t1 = o1;
+            t2 = o2;
+            t3 = o3;
+
+            o1 = o2;
+            o2 = o3;
+            o3 = o1;
+
+            Test(o3.id).ToBeEqual(2);
+
+            o3.d();
+
+            Test(o1.id).ToBeEqual(3);
+            Test(o2.id).ToBeEqual(3);
+            Test(o3.id).ToBeEqual(3);
+
+            Test(t1.id).ToBeEqual(1);
+            Test(t2.id).ToBeEqual(3);
+            Test(t3.id).ToBeEqual(3);
+        });
+    });
+}
