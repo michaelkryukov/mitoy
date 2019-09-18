@@ -5,7 +5,7 @@
 A little language written in my spare time with `python` and `rply`. It's
 nothing special or serious, but I decided to share anyway. I received some
 nice experience that can help me in future projects (maybe one day I will
-create worthy programming language \_c:_/).
+create worthy programming language).
 
 You can find language's grammar in [this file](grammar). Example programs and
 their test you can find in [this folder](examples/).
@@ -40,6 +40,23 @@ fn Main() {
     TraceNl(Fact(5));  # Outputs 120
 }
 ```
+
+## Built-In methods
+
+> From file [`mitoy/std.py`](mitoy/std.py)
+
+- `Str(val)` turn val into string
+- `Int(val)` turn val into int (or throw an exception)
+- `Float(val)` turn val into float (or throw an exception)
+
+- `StrSlice(val, s, e)` return part of val string from index s to e
+- `StrLen(val)` return length of string val
+
+- `Input(val)` ask the user for input and return inputted line
+- `WriteToFile(filename, content)` write content into a file with filename
+
+- `TraceNl(val)` print val with a newline at the end of line
+- `Trace(val)` print val without a newline at the end of line
 
 ## Running
 
