@@ -1,0 +1,22 @@
+import t "testing"
+
+fn Test() {
+    t.Describe("Strings", fn (Case) {
+        Case("Strings with length 1 returns correctly", fn (Test) {
+            Test(StrSlice("abc", 0, 1)).ToBeEqual("a");
+            Test(StrSlice("abc", 1, 2)).ToBeEqual("b");
+            Test(StrSlice("abc", 2, 3)).ToBeEqual("c");
+        });
+
+        Case("Slice with full length returns same string", fn (Test) {
+            str = "abc";
+
+            Test(StrSlice(str, 0, StrLen(str))).ToBeEqual(str);
+        });
+
+        Case("Part of string returns correctly", fn (Test) {
+            Test(StrSlice("abc", 1, 3)).ToBeEqual("bc");
+            Test(StrSlice("abc abc", 4, 7)).ToBeEqual("abc");
+        });
+    });
+}
