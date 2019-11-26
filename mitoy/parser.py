@@ -253,6 +253,120 @@ def parse(source, source_path=""):
     pg.parse()
     parser = pg.get_parser()
 
+    WORKFLOW_SHOWCASE = False
+
+    if WORKFLOW_SHOWCASE:
+        goto = parser.lr_table.lr_goto
+        action = parser.lr_table.lr_action
+        prods = parser.lr_table.grammar.productions
+        de = parser.lr_table.default_reductions
+
+        t = [0]
+
+        print(de[t[-1]])
+        print(goto[t[-1]])
+        print(action[t[-1]])
+        t.append(action[t[-1]]["'fn'"])
+        print("=" * 80)
+
+        print(de[t[-1]])
+        print(goto[t[-1]])
+        print(action[t[-1]])
+        t.append(action[t[-1]]["IDENT"])
+        print("=" * 80)
+
+        print(de[t[-1]])
+        print(goto[t[-1]])
+        print(action[t[-1]])
+        t.append(action[t[-1]]["'('"])
+        print("=" * 80)
+
+        print(de[t[-1]])
+        print(goto[t[-1]])
+        print(action[t[-1]])
+        tt = action[t[-1]]["')'"]
+        print("=" * 80)
+
+        print(de[tt])
+        print(prods[-tt], prods[-tt].getlength())
+        t.append(goto[t[-1]]['arguments'])
+        print("r", "=" * 78)
+
+        print(de[t[-1]])
+        print(goto[t[-1]])
+        print(action[t[-1]])
+        t.append(action[t[-1]]["')'"])
+        print("=" * 80)
+
+        print(de[t[-1]])
+        print(goto[t[-1]])
+        print(action[t[-1]])
+        t.append(action[t[-1]]["'{'"])
+        print("=" * 80)
+
+        print(de[t[-1]])
+        print(goto[t[-1]])
+        print(action[t[-1]])
+        tt = action[t[-1]]["'}'"]
+        print("=" * 80)
+
+        print(de[tt])
+        print(prods[-tt], prods[-tt].getlength())
+        t.append(goto[t[-1]]['expressions'])
+        print("r", "=" * 78)
+
+        print(de[t[-1]])
+        print(goto[t[-1]])
+        print(action[t[-1]])
+        t.append(action[t[-1]]["'}'"])
+        print("=" * 80)
+
+        print(de[t[-1]])
+        print(goto[t[-1]])
+        print(action[t[-1]])
+        tt = action[t[-1]]["$end"]
+        print("=" * 80)
+
+        print(de[tt])
+        print(prods[-tt], prods[-tt].getlength())
+        del t[-8:]
+        t.append(goto[t[-1]]['function'])
+        print("r", "=" * 78)
+
+        print(de[t[-1]])
+        print(goto[t[-1]])
+        print(action[t[-1]])
+        tt = action[t[-1]]["$end"]
+        print("=" * 80)
+
+        print(de[tt])
+        print(prods[-tt], prods[-tt].getlength())
+        t.append(goto[t[-1]]['topdefs'])
+        print("r", "=" * 78)
+
+        tt = de[t[-1]]
+        print(prods[-tt], prods[-tt].getlength())
+        del t[-2:]
+        t.append(goto[t[-1]]['topdefs'])
+        print("r", "=" * 78)
+
+        tt = de[t[-1]]
+        print(prods[-tt], prods[-tt].getlength())
+        del t[-1:]
+        t.append(goto[t[-1]]['module'])
+        print("r", "=" * 78)
+
+        print(de[t[-1]])
+        print(goto[t[-1]])
+        print(action[t[-1]])
+        t.append(action[t[-1]]["$end"])
+        print("=" * 80)
+
+        if t[-1] == 0:
+            print("END")
+
+        exit()
+
     context = {
         '_pc': std.get_builtins(),
         '__parse': parse,

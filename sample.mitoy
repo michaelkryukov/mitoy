@@ -1,0 +1,6 @@
+fn One() { ret 1 }
+
+fn Main() {
+    TraceNl(One());  # Outputs 24
+    TraceNl(One());  # Outputs 120
+}
